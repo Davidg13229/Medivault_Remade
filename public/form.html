@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Medical History Form</title>
+
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="assets\css\style.css">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+	<!--NAVBAR-->
+	<nav class="navbar navbar-expand-lg sticky-top bg-custom">
+		<div class="container">
+			<a class="navbar-brand" href="/">
+				<img class="logo2" src="assets\images\logo2.png" alt="">
+			</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+				aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarNav">
+				<ul class="navbar-nav ms-auto">
+					<li class="nav-item">
+						<a class="nav-link" href="/">HOME</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/#Login">LOG IN</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<div id="form-page" class="container mt-5 hidden">
+		<div class="row justify-content-center">
+			<div class="col-md-8 form-container">
+				<h2 class="text-center">Medical History Form</h2>
+
+				<form method="POST" action="/form">
+
+					<!-- Personal Details Section -->
+					<h4 class="mt-4">Personal Details</h4>
+					<div class="form-group required ">
+						<label for="patientName">Full Name</label>
+						<input type="text" class="form-control inptborder" id="patientName" name="patientName" required>
+					</div>
+					<div class="form-group required">
+						<div class="d-flex align-items-end">
+							<div style="flex: 1;">
+								<label for="patientBday">Birthday</label>
+								<input type="date" class="form-control inptborder" id="patientBday" name="patientBday"
+									required>
+							</div>
+							<div style="flex: 1; margin-left: 10px;">
+								<label for="patientAge">Age</label>
+								<input type="number" class="form-control inptborder" id="patientAge" name="patientAge"
+									disabled required readonly>
+							</div>
+							<div style="flex: 1; margin-left: 10px;">
+								<label for="patientSex">Sex</label>
+								<select class="form-control inptborder" id="patientSex" name="patientSex" required>
+									<option value="" disabled selected>Select</option>
+									<option value="M">Male</option>
+									<option value="F">Female</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="form-group required">
+						<div class="d-flex align-items-end">
+							<div style="flex: 1;">
+								<label for="patientRel">Religion</label>
+								<input type="text" class="form-control inptborder" id="patientRel" name="patientRel"
+									required>
+							</div>
+							<div style="flex: 1; margin-left: 10px;">
+								<label for="patientMarStat">Marital Status</label>
+								<select class="form-control inptborder" id="patientMarStat" name="patientMarStat"
+									required>
+									<option value="" disabled selected>Select</option>
+									<option value="divorced">Divorced</option>
+									<option value="married">Married</option>
+									<option value="separated">Separated</option>
+									<option value="single">Single</option>
+									<option value="widowed">Widowed</option>
+								</select>
+							</div>
+							<div style="flex: 1; margin-left: 10px;">
+								<label for="patientOccup">Occupation</label>
+								<input type="text" class="form-control inptborder" id="patientOccup" name="patientOccup"
+									required>
+							</div>
+						</div>
+					</div>
+					<div class="form-group required">
+						<div class="d-flex align-items-end">
+							<div style="flex: 1;">
+								<label for="patientPNum">Phone Number</label>
+								<input type="tel" class="form-control inptborder" id="patientPNum" name="patientPNum"
+									required>
+							</div>
+							<div style="flex: 1; margin-left: 10px;">
+								<label for="patientEmail">Email Address</label>
+								<input type="email" class="form-control inptborder" id="patientEmail"
+									name="patientEmail" disabled required readonly>
+							</div>
+						</div>
+					</div>
+
+					<!-- Medical Details Section -->
+					<h4 class="mt-4">Medical Details</h4>
+					<div class="form-group required">
+						<div class="d-flex align-items-end">
+							<div style="flex: 1;">
+								<label for="patientBType">Blood Type</label>
+								<select class="form-control inptborder" id="patientBType" name="patientBType" required>
+									<option value="" disabled selected>Select</option>
+									<option value="O-">O-</option>
+									<option value="O+">O+</option>
+									<option value="A-">A-</option>
+									<option value="A+">A+</option>
+									<option value="B-">B-</option>
+									<option value="B+">B+</option>
+									<option value="AB-">AB-</option>
+									<option value="AB+">AB+</option>
+								</select>
+							</div>
+							<div style="flex: 1; margin-left: 10px;">
+								<label for="patientHeight">Height (cm)</label>
+								<input type="number" class="form-control inptborder" id="patientHeight"
+									name="patientHeight">
+							</div>
+							<div style="flex: 1; margin-left: 10px;">
+								<label for="patientWeight">Weight (kg)</label>
+								<input type="number" step="0.01" class="form-control inptborder" id="patientWeight"
+									name="patientWeight" required>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="doctorPDoc">PCP's Name </label>
+						<input type="text" class="form-control inptborder" id="doctorPDoc" name="doctorPDoc">
+					</div>
+					<div class="form-group">
+						<div class="d-flex align-items-end">
+							<div style="flex: 1;">
+								<label for="doctorPNum">PCP's Phone Number </label>
+								<input type="tel" class="form-control inptborder" id="doctorPNum" name="doctorPNum">
+							</div>
+							<div style="flex: 1; margin-left: 10px;">
+								<label for="doctorPEmail">PCP's Email Address </label>
+								<input type="email" class="form-control inptborder" id="doctorPEmail"
+									placeholder="example@gmail.com" name="doctorPEmail">
+							</div>
+						</div>
+					</div>
+
+					<!-- Condition Details Section -->
+					<div id="conditions-container">
+						<h4 class="mt-4">Medical Conditions</h4>
+						<div class="condition-item form-group">
+							<label for="conditionName">Condition Name</label>
+							<input type="text" class="form-control inptborder" name="conditions[][conditionName]">
+							<label for="diagnoseDate">Date of Diagnose</label>
+							<input type="date" class="form-control inptborder" name="conditions[][diagnoseDate]">
+							<label for="conditionMed">Medicine</label>
+							<input type="text" class="form-control inptborder" name="conditions[][med]">
+							<button type="button" class="btn btn-danger btn-sm delete-condition">Delete</button>
+						</div>
+					</div>
+					<button type="button" id="add-condition" class="btn btn-outline-primary mt-3">Add Another
+						Condition</button>
+
+					<!-- Allergy Details Section -->
+					<div id="allergy-container">
+						<h4 class="mt-4">Allergy Conditions</h4>
+						<div class="allergy-item form-group">
+							<label for="allergenName">Allergy Name</label>
+							<input type="text" class="form-control inptborder" name="allergies[][allergenName]">
+							<label for="allergyMed">Medicine</label>
+							<input type="text" class="form-control inptborder" name="allergies[][allergyMed]">
+							<button type="button" class="btn btn-danger btn-sm delete-allergy">Delete</button>
+						</div>
+					</div>
+					<button type="button" id="add-allergy" class="btn btn-outline-primary mt-3">Add Another
+						Allergy</button>
+
+					<!-- Surgery Details Section -->
+					<div id="surgery-container">
+						<h4 class="mt-4">Surgery Details</h4>
+						<div class="surgery-item form-group">
+							<label for="surgeryLoc">Surgery Location</label>
+							<input type="text" class="form-control inptborder" name="surgeries[][surgeryLoc]">
+							<div class="d-flex align-items-end">
+								<div style="flex: 1;">
+									<label for="surgeryType">Type</label>
+									<input type="text" class="form-control inptborder" name="surgeries[][surgeryType]">
+								</div>
+								<div style="flex: 1; margin-left: 10px;">
+									<label for="surgeryDate">Date Conducted</label>
+									<input type="date" class="form-control inptborder" name="surgeries[][surgeryDate]">
+								</div>
+								<button type="button" class="btn btn-danger btn-sm delete-surgery">Delete</button>
+							</div>
+						</div>
+					</div>
+					<button type="button" id="add-surgery" class="btn btn-outline-primary mt-3">Add Another
+						Surgery</button>
+					<!-- <button type="button" id="submit-button" class="btn btn-solid btn-block">Preview</button> -->
+					<button type="submit" class="btn btn-solid btn-block">Submit</button>
+				</form>
+				<div id="form-result" class="mt-4"></div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Preview Section -->
+	<div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="previewModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="previewModalLabel">Medical History Preview</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body" id="modal-preview-content">
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-brand" data-dismiss="modal">Back</button>
+					<!-- <button type="submit" id="submit-button-modal" class="btn btn-brand" data-dismiss="modal">Submit</button> -->
+					<button type="submit" id="submit-button" class="btn btn-brand" data-dismiss="modal">Submit</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!--FOOTER-->
+	<section id="footer" class="foot">
+		<div class="container">
+			<footer class="py-3 my-4">
+				<ul class="nav justify-content-center border-bottom pb-3 mb-3"></ul>
+				<div class="footer-logo">
+					<img src="assets\images\logo mini.png" alt="footer-logo">
+				</div>
+				<p class="text-center">© 2024 INFOMAN BRAGAIS GARCIA PAGUIO SANAO</p>
+			</footer>
+		</div>
+	</section>
+
+	<script>
+		window.onload = function () {
+			// Retrieve the email from localStorage
+			const signUpEmail = localStorage.getItem('signUpEmail');
+
+			// Populate the email field if the email exists
+			if (signUpEmail) {
+				document.getElementById('patientEmail').value = signUpEmail;
+			}
+		}
+	</script>
+
+	<script>
+		// Handle age form submission
+		document.querySelector('form').addEventListener('submit', function (event) {
+			// Enable the patientAge field just before submitting the form
+			document.getElementById('patientAge').disabled = false;
+		});
+
+		// Handle email form submission
+		document.querySelector('form').addEventListener('submit', function (event) {
+			// Enable the patientEmail field just before submitting the form
+			document.getElementById('patientEmail').disabled = false;
+		});
+	</script>
+
+	<script>
+		// Function to gather data from the form
+		function gatherFormData() {
+			let formData = {
+				conditions: [],
+				allergies: [],
+				surgeries: []
+			};
+
+			// Gather Medical Conditions
+			document.querySelectorAll('#conditions-container .condition-item').forEach(item => {
+				let condition = {
+					conditionName: item.querySelector('[name="conditions[][conditionName]"]').value,
+					diagnoseDate: item.querySelector('[name="conditions[][diagnoseDate]"]').value,
+					med: item.querySelector('[name="conditions[][med]"]').value
+				};
+				formData.conditions.push(condition);
+			});
+
+			// Gather Allergy Conditions
+			document.querySelectorAll('#allergy-container .allergy-item').forEach(item => {
+				let allergy = {
+					allergenName: item.querySelector('[name="allergies[][allergenName]"]').value,
+					allergyMed: item.querySelector('[name="allergies[][allergyMed]"]').value
+				};
+				formData.allergies.push(allergy);
+			});
+
+			// Gather Surgery Details
+			document.querySelectorAll('#surgery-container .surgery-item').forEach(item => {
+				let surgery = {
+					surgeryLoc: item.querySelector('[name="surgeries[][surgeryLoc]"]').value,
+					surgeryType: item.querySelector('[name="surgeries[][surgeryType]"]').value,
+					surgeryDate: item.querySelector('[name="surgeries[][surgeryDate]"]').value
+				};
+				formData.surgeries.push(surgery);
+			});
+
+			return formData;
+		}
+
+		// Example of how to use the gathered data
+		document.querySelector('#submit-form').addEventListener('click', function () {
+			let formData = gatherFormData();
+			console.log(formData); // Output or process formData as needed
+		});
+
+	</script>
+
+	<a id="back2Top" title="Back to top" href="#">&#10148;</a>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="assets/js/websitejs.js"></script>
+</body>
+
+</html>
