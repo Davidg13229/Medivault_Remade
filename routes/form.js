@@ -192,7 +192,9 @@ router.post('/', async (req, res) => {
 
     } catch (error) {
         // Rollback the transaction in case of an error
-        await connection.rollback();
+        if (connection) {
+            await connection.rollback();
+        }
         console.error('Error handling form submission:', error);
         res.status(500).json({ error: 'An error occurred while processing your request.' });
     } finally {

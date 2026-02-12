@@ -155,4 +155,56 @@ router.get('/settings', (req, res) => {
     res.render('dashboard/edit');
 }); 
 
+// Route to handle account edit/update
+router.post('/edit', async (req, res) => {
+    try {
+        const loggedInEmail = req.session.loggedInEmail;
+        if (!loggedInEmail) {
+            return res.status(401).json({ error: 'Not authenticated' });
+        }
+
+        const { patientName, patientBday, patientSex, patientRel, patientMarStat, patientOccup, 
+                patientPNum, patientBType, patientHeight, patientWeight } = req.body;
+
+        const updateQuery = `
+            UPDATE patient 
+            SET patientName = ?, patientBday = ?, patientSex = ?, patientRel = ?, 
+                patientMarStat = ?, patientOccup = ?, patientPNum = ?, patientBType = ?, 
+                patientHeight = ?, patientWeight = ?
+            WHERE patientEmail = ?
+        `;
+
+        await db.query(updateQuery, [
+            patientName, patientBday, patientSex, patientRel, patientMarStat, patientOccup,
+            patientPNum, patientBType || null, patientHeight, patientWeight, loggedInEmail
+        ]);
+
+        res.json({ success: true, message: 'Profile updated successfully' });
+    } catch (err) {
+        console.error('Update error:', err);
+        res.status(500).json({ error: 'An error occurred while updating.' });
+    }
+});
+
+// Route to handle account deletion
+router.post('/delete', async (req, res) => {
+    try {
+        const loggedInEmail = req.session.loggedInEmail;
+        if (!loggedInEmail) {
+            return res.status(401).json({ error: 'Not authenticated' });
+        }
+
+        // Delete related records first (due to foreign keys)
+        const deleteQuery = `DELETE FROM patient WHERE patientEmail = ?`;
+        await db.query(deleteQuery, [loggedInEmail]);
+
+        // Clear session and redirect
+        req.session.destroy();
+        res.json({ success: true, message: 'Account deleted successfully', redirect: '/' });
+    } catch (err) {
+        console.error('Delete error:', err);
+        res.status(500).json({ error: 'An error occurred while deleting.' });
+    }
+});
+
 module.exports = router;
