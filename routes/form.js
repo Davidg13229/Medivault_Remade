@@ -34,12 +34,12 @@ router.post('/', async (req, res) => {
         connection = await db.getConnection();
         const {
             patientName, patientBday, patientSex, patientRel, patientMarStat, patientOccup,
-            patientPNum, patientEmail, patientPass, patientBType = null, patientHeight, patientWeight, fk_doctor_ID = null, doctorPDoc, doctorPNum,
+            patientPNum, patientPass, patientBType = null, patientHeight, patientWeight, fk_doctor_ID = null, doctorPDoc, doctorPNum,
             doctorPEmail, conditions = [], allergies = [], surgeries = []
         } = req.body;
 
         // Validate required fields
-        if (!patientName || !patientBday || !patientSex || !patientRel || !patientMarStat || !patientOccup || !patientPNum || !patientEmail || !patientHeight || !patientWeight) {
+        if (!patientName || !patientBday || !patientSex || !patientRel || !patientMarStat || !patientOccup || !patientPNum || !patientHeight || !patientWeight) {
             return res.status(400).json({ error: 'Missing required fields' });
         }
 
@@ -53,14 +53,14 @@ router.post('/', async (req, res) => {
         const insertPatientQuery = `
             INSERT INTO patient (
                 patientName, patientBday, patientAge, patientSex, patientRel, 
-                patientMarStat, patientOccup, patientPNum, patientEmail, patientBType, patientHeight, patientWeight, fk_doctor_ID
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                patientMarStat, patientOccup, patientPNum, patientBType, patientHeight, patientWeight, fk_doctor_ID
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
 
         // Replace undefined values with null in the parameter array
         const params = [
             patientName, patientBday, patientAge, patientSex, patientRel, patientMarStat, patientOccup,
-            patientPNum, patientEmail, handleUndefined(patientBType), patientHeight, patientWeight, handleUndefined(fk_doctor_ID)
+            patientPNum, handleUndefined(patientBType), patientHeight, patientWeight, handleUndefined(fk_doctor_ID)
         ];
 
         // Look up or insert doctor information
