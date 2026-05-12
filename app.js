@@ -7,7 +7,7 @@ const logger = require('morgan');
 
 const flash = require('express-flash');
 const session = require('express-session');
-const connection = require('./config/database'); // Use your mysql connection here
+const connection = require('./config/database.js'); // Use your mysql connection here
 
 const formRouter = require('./routes/form');
 const dashboardRouter = require('./routes/dashboard');
@@ -67,3 +67,4 @@ const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
+

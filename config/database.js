@@ -8,4 +8,13 @@ const pool = mysql.createPool({
 	database:'infoman'
 });
 
+pool.getConnection()
+	.then(connection => {
+		console.log('Connected to the database');
+		connection.release();
+	})
+	.catch(err => {
+		console.error('Error connecting to the database:', err);
+	});
+
 module.exports = pool;

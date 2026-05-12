@@ -1,4 +1,27 @@
-$(document).ready(function () {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* $(document).ready(function () {
     $('#sidebarCollapse').on('click', function () {
         $('#sidebar').toggleClass('active');
     });
@@ -165,4 +188,4 @@ function deleteAccount() {
 
     // Optionally redirect or perform other actions after deletion
     window.location.href = "home.html";// Redirect to homepage or another appropriate URL
-}
+} */

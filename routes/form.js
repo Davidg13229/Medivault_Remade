@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../config/database');
+const db = require('../config/database.js');
 
 // Compute age based on birthday
 function calculateAge(birthday) {
@@ -10,7 +10,7 @@ function calculateAge(birthday) {
     const monthDifference = today.getMonth() - birthDate.getMonth();
     if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
         age--;
-    }
+    } 
     return age;
 }
 
@@ -34,7 +34,7 @@ router.post('/', async (req, res) => {
         connection = await db.getConnection();
         const {
             patientName, patientBday, patientSex, patientRel, patientMarStat, patientOccup,
-            patientPNum, patientEmail, patientBType = null, patientHeight, patientWeight, fk_doctor_ID = null, doctorPDoc, doctorPNum,
+            patientPNum, patientEmail, patientPass, patientBType = null, patientHeight, patientWeight, fk_doctor_ID = null, doctorPDoc, doctorPNum,
             doctorPEmail, conditions = [], allergies = [], surgeries = []
         } = req.body;
 
@@ -53,8 +53,7 @@ router.post('/', async (req, res) => {
         const insertPatientQuery = `
             INSERT INTO patient (
                 patientName, patientBday, patientAge, patientSex, patientRel, 
-                patientMarStat, patientOccup, patientPNum, patientEmail, 
-                patientBType, patientHeight, patientWeight, fk_doctor_ID
+                patientMarStat, patientOccup, patientPNum, patientEmail, patientBType, patientHeight, patientWeight, fk_doctor_ID
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
 
