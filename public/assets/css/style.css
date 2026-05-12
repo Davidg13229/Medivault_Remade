@@ -53,6 +53,18 @@ img{
 .navbar{
     box-shadow: var(--box-shadow) ;
 }
+.navbar-toggler {
+    border-color: var(--c-white);
+}
+.navbar-toggler i {
+    color: var(--c-white);
+    font-size: 1.2rem;
+}
+@media (max-width: 991.98px) {
+    .navbar-nav {
+        text-align: center;
+    }
+}
 .navbar-nav .nav-link{
     font-weight: 500;
     color: var(--c-white);
@@ -200,15 +212,35 @@ h5 {
 #Login .login-wrap {
     padding: 80px;
     max-width: 60%;
-    
+}
+
+@media (max-width: 767.98px) {
+    #Login .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    #Login .col-md-12 {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    #Login .login-wrap {
+        max-width: 100%;
+        padding: 40px 24px;
+        text-align: center;
+    }
+    #Login .login-wrap .form-group {
+        text-align: left;
+    }
+    #Login .login-wrap .form-group button {
+        width: 100%;
+    }
 }
 
 #Login .login-wrap h3 {
-    color: var(--c-darke); 
-    font-family: var(--font-base); 
+    color: var(--c-darke);
+    font-family: var(--font-base);
     text-align: center;
     position: relative;
-
 }
 
 #Login .form-control {
