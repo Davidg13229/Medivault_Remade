@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../config/database');
+const db = require('../config/database.js');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 

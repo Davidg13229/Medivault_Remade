@@ -1,4 +1,28 @@
-$(document).ready(function () {
+const express = require('express');
+const router = express.Router();
+const db = require('../config/database.js');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* $(document).ready(function () {
     $('#sidebarCollapse').on('click', function () {
         $('#sidebar').toggleClass('active');
     });
@@ -165,4 +189,4 @@ function deleteAccount() {
 
     // Optionally redirect or perform other actions after deletion
     window.location.href = "home.html";// Redirect to homepage or another appropriate URL
-}
+} */
