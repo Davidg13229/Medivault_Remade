@@ -2,6 +2,16 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/database.js');
 
+
+// GET route to render the form with accountID from session
+router.get('/', (req, res) => {
+    const accountID = req.session.patientAccID;
+    if (!accountID) {
+        return res.status(400).send('No account ID found. Please sign up first.');
+    }
+    res.render('form', { accountID });
+});
+
 // Compute age based on birthday
 function calculateAge(birthday) {
     const birthDate = new Date(birthday);
@@ -34,9 +44,15 @@ router.post('/', async (req, res) => {
         connection = await db.getConnection();
         const {
             patientName, patientBday, patientSex, patientRel, patientMarStat, patientOccup,
-            patientPNum, patientPass, patientBType = null, patientHeight, patientWeight, fk_doctor_ID = null, doctorPDoc, doctorPNum,
+            patientPNum, patientPass, patientBType = null, patientHeight, patientWeight, fk_doctor_ID = null, doctorPDoc, doctorPNum, fk_PatientAcc_ID = null,
             doctorPEmail, conditions = [], allergies = [], surgeries = []
         } = req.body;
+
+        const patientAccID = fk_PatientAcc_ID || req.session.patientAccID;
+
+        if (!patientAccID) {
+            return res.status(400).json({ error: 'Missing patient account ID' });
+        }
 
         // Validate required fields
         if (!patientName || !patientBday || !patientSex || !patientRel || !patientMarStat || !patientOccup || !patientPNum || !patientHeight || !patientWeight) {
@@ -53,18 +69,20 @@ router.post('/', async (req, res) => {
         const insertPatientQuery = `
             INSERT INTO patient (
                 patientName, patientBday, patientAge, patientSex, patientRel, 
-                patientMarStat, patientOccup, patientPNum, patientBType, patientHeight, patientWeight, fk_doctor_ID
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                patientMarStat, patientOccup, patientPNum, patientBType, patientHeight, patientWeight, fk_PatientAcc_ID ,fk_doctor_ID
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
 
         // Replace undefined values with null in the parameter array
         const params = [
             patientName, patientBday, patientAge, patientSex, patientRel, patientMarStat, patientOccup,
-            patientPNum, handleUndefined(patientBType), patientHeight, patientWeight, handleUndefined(fk_doctor_ID)
+            patientPNum, handleUndefined(patientBType), patientHeight, patientWeight, patientAccID, handleUndefined(fk_doctor_ID)
         ];
 
+
+
         // Look up or insert doctor information
-        let doctor_Id = handleUndefined(fk_doctor_ID);
+        let doctor_ID = handleUndefined(fk_doctor_ID);
         if (doctorPDoc || doctorPNum || doctorPEmail) {
             // Check if the doctor exists, allowing null values
             let query = 'SELECT doctor_ID FROM doctor WHERE 1=1';
@@ -94,19 +112,19 @@ router.post('/', async (req, res) => {
             const [doctorResult] = await connection.execute(query, queryParams);
         
             if (doctorResult.length > 0) {
-                doctor_Id = doctorResult[0].doctor_ID;
+                doctor_ID = doctorResult[0].doctor_ID;
             } else {
                 // Insert new doctor, handling null values
                 const [insertDoctorResult] = await connection.execute(
                     'INSERT INTO doctor (doctorPDoc, doctorPNum, doctorPEmail) VALUES (?, ?, ?)',
                     [doctorPDoc || null, doctorPNum || null, doctorPEmail || null]
                 );
-                doctor_Id = insertDoctorResult.insertId;
+                doctor_ID = insertDoctorResult.insertId;
             }
         }
         
         // Update params with the correct doctor ID
-        params[params.length - 1] = doctor_Id;
+        params[params.length - 1] = doctor_ID;
 
         // Execute patient insertion
         const [insertPatientResult] = await connection.execute(insertPatientQuery, params);
@@ -122,7 +140,7 @@ router.post('/', async (req, res) => {
 
 
             const insertConditionQuery = `
-                INSERT INTO \`condition\` (fk_condition_patient_ID, condition_ID, conditionName, conditionDiagnosis, conditionMed)
+                INSERT INTO \`condition\` (fk_condition_patient_ID, condition_Code, conditionName, conditionDiagnosis, conditionMed)
                 VALUES (?, ?, ?, ?, ?)
             `;
             try {
@@ -182,12 +200,15 @@ router.post('/', async (req, res) => {
 
         // Commit the transaction
         await connection.commit();
-        // res.status(200).json({ message: 'Form submitted successfully!' });
 
-        // Redirect to index.html after 5 seconds
-        setTimeout(() => {
-            res.redirect('/'); // Assuming you're using Express
-        }, 5000); // 5000 milliseconds = 5 seconds
+        // Set loggedInEmail in session for dashboard access
+        const [accRows] = await connection.execute('SELECT patientEmail FROM patientacc WHERE account_ID = ?', [patientAccID]);
+        if (accRows.length > 0) {
+            req.session.loggedInEmail = accRows[0].patientEmail;
+        }
+
+        res.redirect('/dashboard'); 
+
 
     } catch (error) {
         // Rollback the transaction in case of an error

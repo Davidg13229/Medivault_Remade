@@ -1,9 +1,70 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/database.js');
+const bcrypt = require('bcrypt');
 
+// Handle POST request to /Sign Up before going to /form.html
+router.post ('/', async (req, res) => {
+    let connection; 
+    try { 
+        connection = await db.getConnection();
+        const { 
+            patientEmail, patientPass
+        } = req.body;
+        
+        if (!patientEmail || !patientPass) {
+            return res.status(400).json({ error: 'Missing Email or Password Fields' });
+        }
 
+         // Start a transaction
+        await connection.beginTransaction();
 
+        const hashedPassword = 
+            await bcrypt.hash(patientPass, 10);
+
+        // Insert patient query
+        const insertPatientAccQuery = `
+            INSERT INTO patientacc (patientEmail, patientPass) 
+            VALUES (?, ?)
+        `;
+        
+        const params = [
+            patientEmail, hashedPassword
+        ];
+
+    // Execute patient insertion
+        const [insertPatientAccResult] = await connection.execute(insertPatientAccQuery, params);
+        const accountID = insertPatientAccResult.insertId;
+
+        // Commit the transaction
+        await connection.commit(); 
+        
+        // Store accountID in session
+        req.session.patientAccID = accountID;
+        
+        res.redirect('/form'); 
+  
+    } catch (error) {
+        // Rollback the transaction in case of an error
+        if (connection) {     
+            await connection.rollback();
+        }
+        console.error('Error handling form submission:', error);
+
+        res.status(500).json({ 
+            error: 'An error occurred while processing your request.' 
+        });
+
+    } finally {
+        // Release the connection if it was acquired
+        if (connection) {
+            connection.release();
+        }
+    }
+
+});
+
+module.exports = router;
 
 
 

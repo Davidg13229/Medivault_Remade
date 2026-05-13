@@ -70,14 +70,20 @@ router.get('/', async (req, res) => {
         // Fetch patient data based on email
         const [rows, fields] = await db.query(`
             SELECT *
-            FROM patient
+            FROM patientacc
+            JOIN patient ON patientacc.account_ID = patient.fk_PatientAcc_ID
             LEFT JOIN doctor ON patient.fk_doctor_ID = doctor.doctor_ID
             LEFT JOIN \`condition\` ON patient.patient_ID = \`condition\`.fk_condition_patient_ID
             LEFT JOIN allergy ON patient.patient_ID = allergy.fk_allergy_patient_ID
             LEFT JOIN surgery ON patient.patient_ID = surgery.fk_surgery_patient_ID
-            WHERE patient.patientEmail = ?
+            WHERE patientacc.patientEmail = ?
             ORDER BY patient.patient_ID
         `, [loggedInEmail]);
+
+        // If no patient data found, redirect to form
+        if (rows.length === 0) {
+            return res.redirect('/form');
+        }
 
         // Map over rows to format dates
         const formattedRows = rows.map(row => ({
