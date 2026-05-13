@@ -11,7 +11,7 @@ const connection = require('./config/database.js'); // Use your mysql connection
 
 const formRouter = require('./routes/form');
 const dashboardRouter = require('./routes/dashboard');
-
+const mainRouter = require('./routes/main');
 
 const app = express();
 
@@ -28,7 +28,7 @@ app.use(bodyParser.json());
 app.use(flash());
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -42,6 +42,7 @@ app.use(session({
 
 app.use('/form', formRouter);
 app.use('/dashboard', dashboardRouter);
+app.use('/main', mainRouter);
 
 // app.use(flash());
 

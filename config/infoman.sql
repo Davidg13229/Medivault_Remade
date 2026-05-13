@@ -89,12 +89,15 @@ CREATE TABLE `patient` (
   `patientWeight` decimal(5,2) NOT NULL,
   `patientPNum` varchar(10) NOT NULL,
   `patientOccup` varchar(30) NOT NULL,
+  `fk_PatientAcc_ID` int DEFAULT NULL,
   `fk_doctor_ID` int DEFAULT NULL,
   PRIMARY KEY (`patient_ID`),
   UNIQUE KEY `patientPNum_UNIQUE` (`patientPNum`),
   KEY `fk_doctor_ID_idx` (`fk_doctor_ID`),
-  CONSTRAINT `fk_doctor_ID` FOREIGN KEY (`fk_doctor_ID`) REFERENCES `doctor` (`doctor_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `fk_PatientAcc_ID_idx` (`fk_PatientAcc_ID`),
+  CONSTRAINT `fk_doctor_ID` FOREIGN KEY (`fk_doctor_ID`) REFERENCES `doctor` (`doctor_ID`) ON UPDATE CASCADE,
+  CONSTRAINT `fk_PatientAcc_ID` FOREIGN KEY (`fk_PatientAcc_ID`) REFERENCES `patientacc` (`account_ID`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -108,12 +111,9 @@ CREATE TABLE `patientacc` (
   `account_ID` int NOT NULL AUTO_INCREMENT,
   `patientEmail` varchar(40) NOT NULL,
   `patientPass` varchar(255) NOT NULL,
-  `fk_patient_ID` int DEFAULT NULL,
   PRIMARY KEY (`account_ID`),
-  UNIQUE KEY `patientEmail_UNIQUE` (`patientEmail`),
-  KEY `fk_patient` (`fk_patient_ID`),
-  CONSTRAINT `fk_patient` FOREIGN KEY (`fk_patient_ID`) REFERENCES `patient` (`patient_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  UNIQUE KEY `patientEmail_UNIQUE` (`patientEmail`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -144,4 +144,4 @@ CREATE TABLE `surgery` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-05-13  0:48:25
+-- Dump completed on 2026-05-13 23:03:49
