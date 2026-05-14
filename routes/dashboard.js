@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 // Middleware to parse incoming request bodies
 router.use(bodyParser.urlencoded({ extended: true }));
 
+// Middleware to check if logged Email session still exists else if not 
 function requireAuth(req, res, next) {
     if (!req.session || !req.session.loggedInEmail) {
         return res.redirect('/');
@@ -27,7 +28,7 @@ function formatDate(dateString) {
     return date.toISOString().split('T')[0]; // Returns YYYY-MM-DD format
 }
 
-// Route to handle form submission
+// Route to handle login authentication from index.html 
 router.post('/', async (req, res) => {
     try {
         const { loginEmail, loginPassword } = req.body;
@@ -37,23 +38,28 @@ router.post('/', async (req, res) => {
         if (!loginEmail || !loginPassword) {
             throw new Error('Email and password are required');
         }
-
+        // Get Hashed Patient Password from patientacc Table 
         const [rows] = await db.query(
             'SELECT patientPass FROM patientacc WHERE patientEmail = ?',
             [loginEmail]
         );
 
+        // If Email does not Match 
         if (rows.length === 0) {
             throw new Error('Invalid email or password');
         }
 
+        // Match the Hashed Password to the loginPassword
         const hashedPassword = rows[0].patientPass;
         const passwordMatch = await bcrypt.compare(loginPassword, hashedPassword);
 
+        
+        // If Password does not Match 
         if (!passwordMatch) {
             throw new Error('Invalid email or password');
         }
 
+        // If both Email and Password Matches dashboard session is now available
         req.session.loggedInEmail = loginEmail;
         console.log('Session loggedInEmail:', req.session.loggedInEmail);
 
@@ -167,6 +173,7 @@ router.get('/edit', requireAuth, (req, res) => {
 });
 
 router.get('/logout', (req, res) => {
+    // destroys req.session.loginEmail = loginEmail; disabling access to account
     req.session.destroy(err => {
         if (err) {
             console.error('Logout error:', err);
