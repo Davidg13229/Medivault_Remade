@@ -1,20 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/database.js');
+const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
-const session = require('express-session');
 
 // Middleware to parse incoming request bodies
 router.use(bodyParser.urlencoded({ extended: true }));
 
-// Session setup
-router.use(session({
-    cookie: { maxAge: 60000 },
-    store: new session.MemoryStore(),
-    saveUninitialized: true,
-    resave: true,
-    secret: 'secret'
-  }));
+function requireAuth(req, res, next) {
+    if (!req.session || !req.session.loggedInEmail) {
+        return res.redirect('/');
+    }
+    next();
+}
 
 // Function to format date into YYYY-MM-DD format
 function formatDate(dateString) {
@@ -32,40 +30,47 @@ function formatDate(dateString) {
 // Route to handle form submission
 router.post('/', async (req, res) => {
     try {
-        const loggedInEmail = req.body.loginEmail;
+        const { loginEmail, loginPassword } = req.body;
 
-        // Debugging: log the incoming email value
-        console.log('Received loginEmail:', loggedInEmail);
+        console.log('Received loginEmail:', loginEmail);
 
-        if (!loggedInEmail) {
-            throw new Error('Email is required');
+        if (!loginEmail || !loginPassword) {
+            throw new Error('Email and password are required');
         }
 
-        // Store loggedInEmail in session
-        req.session.loggedInEmail = loggedInEmail;
+        const [rows] = await db.query(
+            'SELECT patientPass FROM patientacc WHERE patientEmail = ?',
+            [loginEmail]
+        );
 
-        // Debugging: log the session value
+        if (rows.length === 0) {
+            throw new Error('Invalid email or password');
+        }
+
+        const hashedPassword = rows[0].patientPass;
+        const passwordMatch = await bcrypt.compare(loginPassword, hashedPassword);
+
+        if (!passwordMatch) {
+            throw new Error('Invalid email or password');
+        }
+
+        req.session.loggedInEmail = loginEmail;
         console.log('Session loggedInEmail:', req.session.loggedInEmail);
 
         res.redirect('/dashboard');
     } catch (err) {
-        console.error('Form submission error:', err); // Log the error to the console
+        console.error('Form submission error:', err);
         req.flash('error', err.message);
-        // res.redirect('/'); // Redirect to home or login page on error
+        res.redirect('/');
     }
 });
 
 // Route to render the dashboard index
-router.get('/', async (req, res) => {
+router.get('/', requireAuth, async (req, res) => {
     try {
         const loggedInEmail = req.session.loggedInEmail;
 
-        // Debugging: log the session value
         console.log('Session loggedInEmail:', loggedInEmail);
-
-        if (!loggedInEmail) {
-            return res.redirect('/'); // Redirect to home or login page if email is not in session
-        }
 
         // Fetch patient data based on email
         const [rows, fields] = await db.query(`
@@ -153,12 +158,21 @@ router.get('/', async (req, res) => {
 
 
 // Route to render the settings page
-router.get('/settings', (req, res) => {
+router.get('/settings', requireAuth, (req, res) => {
     res.render('dashboard/settings');
 });
 
- router.get('/edit', (req, res) => {
+router.get('/edit', requireAuth, (req, res) => {
     res.render('dashboard/edit');
-}); 
+});
+
+router.get('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            console.error('Logout error:', err);
+        }
+        res.redirect('/');
+    });
+});
 
 module.exports = router;
